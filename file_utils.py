@@ -50,19 +50,6 @@ class FileUtils:
         name: str | None = None,
         extension: str | None = None,
     ) -> Path:
-        """
-        Build a normalized local file path.
-
-        - name is required (non-empty)
-        - subdirectory is optional
-        - extension is optional; if omitted, taken from name if present
-        - no default extension behavior
-
-        Examples:
-            local(subdirectory="images/circles", name="sample_256_256", extension="png")
-            local(subdirectory="images", name="sample_256_256.png")
-            local(name="images/circles/sample_256_256.png")
-        """
         if name is None or len(name.strip()) == 0:
             raise ValueError("FileUtils.local requires a non-empty 'name' parameter")
 
@@ -73,15 +60,22 @@ class FileUtils:
 
         name_path = Path(name)
 
-        # Determine extension
+        # Determine extension, preserving any internal path in "name"
         if extension:
             extension = extension.lstrip(".")
-            file_name = f"{name_path.stem}.{extension}"
+            parent = name_path.parent
+            stem = name_path.stem
+
+            if str(parent) == ".":
+                # No nested path in name, just use the stem
+                file_name = f"{stem}.{extension}"
+            else:
+                # Preserve the path portion from name
+                file_name = str(parent / f"{stem}.{extension}")
         else:
             # assume name already contains its extension if needed
             file_name = name
 
-        # Project root (you already decided to use .parent)
         project_root = Path(__file__).resolve().parent
 
         if subdirectory:
@@ -90,6 +84,7 @@ class FileUtils:
             final_path = project_root / file_name
 
         return final_path.resolve()
+
 
     # ------------------------------------------------------------------
     # Images
@@ -106,6 +101,7 @@ class FileUtils:
         Load an image from an explicit path.
         """
         path = cls._to_path(file_path)
+        print("path is ", path)
 
         if not path.is_file():
             raise FileNotFoundError(f"Image file not found: {path}")
