@@ -47,8 +47,6 @@ class HomeView(QWidget):
                 """
             )
 
-        # Layout: use a 3x3 grid with stretch in the middle cells
-        # so buttons stay anchored to corners when resizing.
         layout = QGridLayout()
         layout.setContentsMargins(16, 16, 16, 16)
         layout.setSpacing(0)
@@ -69,7 +67,6 @@ class HomeView(QWidget):
             alignment=Qt.AlignBottom | Qt.AlignRight,
         )
 
-        # Middle row/column get stretch so the corners stay corners.
         layout.setRowStretch(1, 1)
         layout.setColumnStretch(1, 1)
 
