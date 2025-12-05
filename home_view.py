@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from PySide6.QtWidgets import QWidget, QPushButton, QGridLayout
-from PySide6.QtCore import QSize, Qt
+from PySide6.QtCore import QSize, Qt, Signal
 
 
 class HomeView(QWidget):
@@ -13,6 +13,12 @@ class HomeView(QWidget):
       - 'Generate Test' pinned to the top-left.
       - 'Generate Train' pinned to the bottom-right.
     """
+
+    # ------------------------------------------------------------------
+    # Signals
+    # ------------------------------------------------------------------
+    generate_test_requested = Signal()
+    generate_train_requested = Signal()
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -83,7 +89,9 @@ class HomeView(QWidget):
     # Slots / callbacks
     # ------------------------------------------------------------------
     def on_generate_test_clicked(self) -> None:
-        print("Generate Test was clicked")
+        # Previously: print("Generate Test was clicked")
+        self.generate_test_requested.emit()
 
     def on_generate_train_clicked(self) -> None:
-        print("Generate Train was clicked")
+        # Previously: print("Generate Train was clicked")
+        self.generate_train_requested.emit()

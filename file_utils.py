@@ -101,8 +101,7 @@ class FileUtils:
         Load an image from an explicit path.
         """
         path = cls._to_path(file_path)
-        print("path is ", path)
-
+        
         if not path.is_file():
             raise FileNotFoundError(f"Image file not found: {path}")
 

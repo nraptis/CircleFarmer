@@ -22,6 +22,22 @@ class DataLabel:
         self.name: str = name
         self.pixel_bag: PixelBag = pixel_bag if pixel_bag is not None else PixelBag()
 
+
+    # --------------------------------------------------
+    # PixelBag passthrough wrappers
+    # --------------------------------------------------
+    def clear(self) -> None:
+        self.pixel_bag.clear()
+
+    def add(self, x: int, y: int) -> None:
+        self.pixel_bag.add(x, y)
+
+    def remove(self, x: int, y: int) -> None:
+        self.pixel_bag.remove(x, y)
+
+    def contains(self, x: int, y: int) -> bool:
+        return self.pixel_bag.contains(x, y)
+
     # --------------------------------------------------
     # JSON serialization
     # --------------------------------------------------
