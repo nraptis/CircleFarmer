@@ -4,7 +4,10 @@ from __future__ import annotations
 
 import sys
 from pixel_bag import PixelBag
-from random import random
+
+from trial import trial
+from trial2 import trial2
+
 
 from PySide6.QtWidgets import (
     QApplication,
@@ -14,12 +17,10 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
 )
 from PySide6.QtCore import QSize
-
 from home_view import HomeView
 from top_panel import TopPanel
 from left_panel import LeftPanel
 from right_panel import RightPanel
-
 
 class MainWindow(QMainWindow):
     """
@@ -81,38 +82,8 @@ class MainWindow(QMainWindow):
         self.home_view = HomeView(central)
         root_layout.addWidget(self.home_view, 1)  # stretch to fill
 
-
-
-        # ---------------------------------------
-        # Create PixelBag + 25 random pixels
-        # ---------------------------------------
-        bag = PixelBag()
-
-        y = 1
-        x = 2
-        for _ in range(25):
-
-            x += 2
-            if x > 10:
-                x = 2
-                y += 1
-            bag.add(x, y)
-
-        # ---------------------------------------
-        # Convert to JSON
-        # ---------------------------------------
-        j = bag.to_json()
-        print("JSON:")
-        print(j)
-
-        # ---------------------------------------
-        # Convert back from JSON
-        # ---------------------------------------
-        bag2 = PixelBag.from_json(j)
-
-        print("\nBag2:", len(bag2), sorted(list(bag2)))
-        print("Bag :", len(bag),  sorted(list(bag)))
-        
+        trial()
+        trial2()
 
 
 def main() -> None:

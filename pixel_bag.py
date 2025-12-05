@@ -1,7 +1,6 @@
 # pixel_bag.py
 from __future__ import annotations
-
-from typing import Any, Dict
+from typing import Any, List
 
 from pixel_bag_run_length import PixelBagRunLength
 from pixel_bag_run_length_stripe import PixelBagRunLengthStripe
@@ -94,8 +93,73 @@ class PixelBag:
         """Iterate over (x, y) pairs."""
         return iter(self._set)
 
+    def summary(self) -> dict:
+        """
+        Return summary statistics:
+
+            {
+            "count": int,
+            "median": (x_med, y_med) | None,
+            "size": (width, height)
+            }
+
+        width  = xmax - xmin + 1
+        height = ymax - ymin + 1
+        """
+        count = len(self._set)
+        if count == 0:
+            return {
+                "count": 0,
+                "median": None,
+                "size": (0, 0),
+            }
+
+        xs = [x for (x, _) in self._set]
+        ys = [y for (_, y) in self._set]
+
+        xs_sorted = sorted(xs)
+        ys_sorted = sorted(ys)
+        mid = count // 2
+
+        median_x = xs_sorted[mid]
+        median_y = ys_sorted[mid]
+
+        xmin = self.xmin
+        xmax = self.xmax
+        ymin = self.ymin
+        ymax = self.ymax
+
+        width = (xmax - xmin + 1) if xmin is not None and xmax is not None else 0
+        height = (ymax - ymin + 1) if ymin is not None and ymax is not None else 0
+
+        return {
+            "count": count,
+            "median": (median_x, median_y),
+            "size": (width, height),
+        }
+
+
     def __repr__(self):
-        return f"PixelBag({len(self._set)} pixels)"
+        """
+        Compact one-line summary:
+
+            PixelBag(count=67, median=(46,77), size=(80, 111))
+        """
+        info = self.summary()
+        count = info["count"]
+
+        if count == 0:
+            return "PixelBag(count=0)"
+
+        mx, my = info["median"]
+        w, h = info["size"]
+
+        return (
+            f"PixelBag(count={count}, "
+            f"median=({mx}, {my}), "
+            f"size=({w}, {h}))"
+        )
+
 
     # --------------------------------------------------
     # Run-length conversion
@@ -121,37 +185,32 @@ class PixelBag:
                     result.add_stripe(PixelBagRunLengthStripe(y, x_start, x_end))
                 else:
                     x += 1
-
         return result
 
     # --------------------------------------------------
     # JSON serialization
     # --------------------------------------------------
-    def to_json(self) -> Dict[str, Any]:
+    def to_json(self) -> List[Any]:
         """
-        Serialize this PixelBag to a JSON-compatible dict.
-
-        Currently uses run-length encoding under the hood, so the JSON
-        format is exactly whatever PixelBagRunLength.to_json() returns:
-            { "stripes": [ { "y": ..., "x_start": ..., "x_end": ... }, ... ] }
+        Serialize this PixelBag to a JSON-compatible list of run-length
+        stripe objects:
+            [ { "y": ..., "x_start": ..., "x_end": ... }, ... ]
         """
         rle = self.to_run_length()
         return rle.to_json()
 
     @staticmethod
-    def from_json(data: Dict[str, Any]) -> "PixelBag":
+    def from_json(data: List[Any]) -> "PixelBag":
         """
-        Deserialize a PixelBag from a JSON-compatible dict produced
+        Deserialize a PixelBag from a JSON-compatible list produced
         by PixelBag.to_json().
 
         Reconstructs all (x, y) pixels from the run-length stripes.
         """
         rle = PixelBagRunLength.from_json(data)
         bag = PixelBag()
-
         for stripe in rle.stripes:
             y = stripe.y
             for x in range(stripe.x_start, stripe.x_end + 1):
                 bag.add(x, y)
-
         return bag

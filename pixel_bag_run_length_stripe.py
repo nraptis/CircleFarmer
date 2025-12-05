@@ -34,3 +34,20 @@ class PixelBagRunLengthStripe:
             x_start=int(data["x_start"]),
             x_end=int(data["x_end"]),
         )
+
+    # --------------------------------------------------
+    # Debug / printing helpers
+    # --------------------------------------------------
+    def repr_str(self, indent: int = 0) -> str:
+        """
+        Return a single-line string representation, with leading tabs
+        based on indent depth.
+        """
+        prefix = "\t" * max(indent, 0)
+        return f"{prefix}(y={self.y}, x_start={self.x_start}, x_end={self.x_end})"
+
+    def __repr__(self) -> str:
+        """
+        Default repr with no indentation.
+        """
+        return self.repr_str(indent=0)
