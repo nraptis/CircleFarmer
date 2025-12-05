@@ -29,7 +29,6 @@ from trial4 import trial4
 
 from filesystem.file_io import FileIO
 
-
 class MainWindow(QMainWindow):
     def __init__(self) -> None:
         super().__init__()
