@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from data_label import DataLabel
+from labels.data_label import DataLabel
 
 @dataclass
 class CircleLabelPlacement:

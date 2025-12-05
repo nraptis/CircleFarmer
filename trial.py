@@ -1,7 +1,7 @@
-from data_label import DataLabel
-from pixel_bag import PixelBag
+from labels.data_label import DataLabel
+from labels.pixel_bag import PixelBag
 import json
-from data_label_collection import DataLabelCollection
+from labels.data_label_collection import DataLabelCollection
 import random
 
 def make_block_bag(x0: int, y0: int, w: int, h: int) -> PixelBag:

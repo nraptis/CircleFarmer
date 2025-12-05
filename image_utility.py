@@ -1,8 +1,8 @@
 # image_utility.py
 from __future__ import annotations
 import random
-from rgba import RGBA
-from bitmap import Bitmap
+from image.rgba import RGBA
+from image.bitmap import Bitmap
 
 
 class ImageUtility:

@@ -3,10 +3,10 @@ from __future__ import annotations
 
 import json
 
-from bitmap import Bitmap
-from rgba import RGBA
-from file_utils import FileUtils
-from image_annotation_document import ImageAnnotationDocument
+from image.bitmap import Bitmap
+from image.rgba import RGBA
+from filesystem.file_utils import FileUtils
+from labels.image_annotation_document import ImageAnnotationDocument
 
 
 def trial3() -> None:
@@ -24,7 +24,7 @@ def trial3() -> None:
     #    (adjust these to match what Runner generated)
     # --------------------------------------------------
     folder = "testing"  # or "training"
-    base_name = "genxyz_test_00000"  # e.g. same pattern as Runner
+    base_name = "proto_cells_test_000"  # e.g. same pattern as Runner
 
     image_file_name = base_name
     annotation_file_name = f"{base_name}_annotations"

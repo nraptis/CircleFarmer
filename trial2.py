@@ -1,7 +1,7 @@
-from data_label import DataLabel
-from pixel_bag import PixelBag
-from data_label_collection import DataLabelCollection
-from image_annotation_document import ImageAnnotationDocument
+from labels.data_label import DataLabel
+from labels.pixel_bag import PixelBag
+from labels.data_label_collection import DataLabelCollection
+from labels.image_annotation_document import ImageAnnotationDocument
 import random
 
 

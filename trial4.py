@@ -4,8 +4,8 @@ from __future__ import annotations
 import json
 from PIL import Image
 
-from file_utils import FileUtils
-from image_annotation_document import ImageAnnotationDocument
+from filesystem.file_utils import FileUtils
+from labels.image_annotation_document import ImageAnnotationDocument
 
 
 def trial4() -> None:
@@ -23,7 +23,7 @@ def trial4() -> None:
     #    Adjust to match what Runner generated.
     # --------------------------------------------------
     folder = "testing"  # or "training"
-    base_name = "genxyz_test_00008"
+    base_name = "proto_cells_test_001"
 
     image_file_name = base_name
     annotation_file_name = f"{base_name}_annotations"

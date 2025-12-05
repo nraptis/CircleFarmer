@@ -5,17 +5,17 @@ import random
 from typing import List
 
 from runner_params import RunnerParams
-from bitmap import Bitmap
+from image.bitmap import Bitmap
 from background_factory import BackgroundFactory
 from circle_factory import CircleFactory
-from file_utils import FileUtils
+from filesystem.file_utils import FileUtils
 from image_utility import ImageUtility
-from rgba import RGBA
+from image.rgba import RGBA
 from color_enum import ColorName
-from data_label import DataLabel
+from labels.data_label import DataLabel
 from circle_label_placement import CircleLabelPlacement
-from data_label_collection import DataLabelCollection
-from image_annotation_document import ImageAnnotationDocument
+from labels.data_label_collection import DataLabelCollection
+from labels.image_annotation_document import ImageAnnotationDocument
 import json
 
 class Runner:

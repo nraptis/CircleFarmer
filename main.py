@@ -27,6 +27,8 @@ from trial2 import trial2
 from trial3 import trial3
 from trial4 import trial4
 
+from filesystem.file_io import FileIO
+
 
 class MainWindow(QMainWindow):
     def __init__(self) -> None:
@@ -93,8 +95,46 @@ class MainWindow(QMainWindow):
 
         trial()
         trial2()
-        # trial3()
-        # trial4()
+        trial3()
+        trial4()
+        
+        files = FileIO.get_all_files_local("testing")
+        print("files_a ")
+        for file in files:
+            print("=> ", file)
+
+        files = FileIO.get_all_files_local("/testing")
+        print("files_b ")
+        for file in files:
+            print("=> ", file)
+
+        files = FileIO.get_all_files_local("/testing//")
+        print("files_c ")
+        for file in files:
+            print("=> ", file)
+
+
+        files = FileIO.get_all_files_local_recursive("testing")
+        print("files_d ")
+        for file in files:
+            print("=> ", file)
+
+        files = FileIO.get_all_files_local_recursive("///testing")
+        print("files_e ")
+        for file in files:
+            print("=> ", file)
+
+        files = FileIO.get_all_files_local_recursive("////testing/////")
+        print("files_f ")
+        for file in files:
+            print("=> ", file)
+
+        pngs = [p for p in files if p.suffix.lower() == ".png"]
+
+        print("png => ")
+        for file in pngs:
+            print("=> ", file)
+
 
     # ------------------------------------------------------
     # Helper: collect all params from the panels

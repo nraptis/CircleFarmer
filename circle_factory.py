@@ -1,7 +1,7 @@
 # circle_factory.py
 from __future__ import annotations
 import random
-from bitmap import Bitmap
+from image.bitmap import Bitmap
 
 
 class CircleFactory:

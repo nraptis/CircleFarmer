@@ -1,7 +1,7 @@
 from __future__ import annotations
 import random
-from bitmap import Bitmap
-from file_utils import FileUtils
+from image.bitmap import Bitmap
+from filesystem.file_utils import FileUtils
 from PIL import Image
 
 class BackgroundFactory:

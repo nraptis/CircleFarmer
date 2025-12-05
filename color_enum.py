@@ -1,7 +1,7 @@
 from __future__ import annotations
 import random
 from enum import Enum, auto
-from rgba import RGBA
+from image.rgba import RGBA
 
 INSET = 32            # avoid pure 0 or 255
 MAXC  = 255 - INSET   # 223
