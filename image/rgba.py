@@ -91,9 +91,21 @@ class RGBA:
     def af(self, v):
         self._a = int(self._clamp_float(v) * 255)
 
-    # ------------------------------
+   # ------------------------------
     # Utility
     # ------------------------------
+    @classmethod
+    def luma_from_rgb(cls, r, g, b) -> float:
+        return (
+            0.299 * r
+            + 0.587 * g
+            + 0.114 * b
+        )
+    
+    def to_gray(self) -> int:
+        gray = 0.299 * self._r + 0.587 * self._g + 0.114 * self._g
+        return self._clamp_int(round(gray))
+    
     def tuple(self):
         return (self._r, self._g, self._b, self._a)
     
@@ -122,28 +134,6 @@ class RGBA:
         out_r = src.rf * sa + dst.rf * (1.0 - sa)
         out_g = src.gf * sa + dst.gf * (1.0 - sa)
         out_b = src.bf * sa + dst.bf * (1.0 - sa)
-
-        return RGBA(
-            int(out_r * 255),
-            int(out_g * 255),
-            int(out_b * 255),
-            int(out_a * 255),
-        )
-
-    @staticmethod
-    def blend_premultiplied(src: "RGBA", dst: "RGBA") -> "RGBA":
-        """
-        Premultiplied alpha:
-        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
-        Assumes src.rgb is already premultiplied by src.a.
-        """
-        sa = src.af
-        da = dst.af
-
-        out_a = sa + da * (1.0 - sa)
-        out_r = src.rf + dst.rf * (1.0 - sa)
-        out_g = src.gf + dst.gf * (1.0 - sa)
-        out_b = src.bf + dst.bf * (1.0 - sa)
 
         return RGBA(
             int(out_r * 255),

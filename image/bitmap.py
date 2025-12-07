@@ -1,10 +1,12 @@
+# bitmap.py
+
 from __future__ import annotations
+from typing import TYPE_CHECKING
 from typing import List
 import numpy as np
 from PIL import Image
 from image.rgba import RGBA
 from filesystem.file_utils import FileUtils
-
 
 # ----------------------------------------------------------------------
 # Bitmap: rgba[x][y] with OpenCV + Pillow interop
@@ -24,12 +26,12 @@ class Bitmap:
         self.height: int = 0
         self.rgba: List[List[RGBA]] = []  # rgba[x][y]
         if width > 0 and height > 0:
-            self.set_size(width, height)
+            self.allocate(width, height)
 
     # --------------------------------------------------
     # The ONLY place we allocate the internal rgba array
     # --------------------------------------------------
-    def set_size(self, width: int, height: int) -> None:
+    def allocate(self, width: int, height: int) -> None:
         """
         Resize the bitmap and allocate internal storage.
         This is the ONLY place rgba[][] is allocated.
@@ -42,6 +44,78 @@ class Bitmap:
             [RGBA(0, 0, 0, 255) for _y in range(self.height)]
             for _x in range(self.width)
         ]
+
+    # --------------------------------------------------
+    # Expansion / copy
+    # --------------------------------------------------
+    def expand(self, width: int, height: int) -> None:
+        """
+        Expand this bitmap to at least (width, height).
+
+        Existing pixels are preserved in the top-left corner.
+        Newly exposed pixels are filled with opaque black (0,0,0,255).
+
+        If the requested size is smaller than or equal to the current
+        size in both dimensions, this is a no-op (no shrinking).
+        """
+        new_w = int(width)
+        new_h = int(height)
+
+        if new_w <= self.width and new_h <= self.height:
+            # Nothing to do; we only expand, never shrink.
+            return
+
+        old_w = self.width
+        old_h = self.height
+        old_rgba = self.rgba
+
+        # Allocate new storage
+        new_rgba = [
+            [RGBA(0, 0, 0, 255) for _y in range(new_h)]
+            for _x in range(new_w)
+        ]
+
+        copy_w = min(old_w, new_w)
+        copy_h = min(old_h, new_h)
+
+        # Copy old pixels into the new buffer (top-left aligned)
+        for x in range(copy_w):
+            src_col = old_rgba[x]
+            dst_col = new_rgba[x]
+            for y in range(copy_h):
+                src_px = src_col[y]
+                dst_px = dst_col[y]
+                dst_px.ri = src_px.ri
+                dst_px.gi = src_px.gi
+                dst_px.bi = src_px.bi
+                dst_px.ai = src_px.ai
+
+        # Swap in the new buffer
+        self.width = new_w
+        self.height = new_h
+        self.rgba = new_rgba
+
+    def copy(self) -> "Bitmap":
+        """
+        Deep copy this bitmap into a new Bitmap instance.
+        Pixels are duplicated (no shared RGBA objects).
+        """
+        result = Bitmap()
+        result.allocate(self.width, self.height)
+        new_rgba = result.rgba
+
+        for x in range(self.width):
+            src_col = self.rgba[x]
+            dst_col = new_rgba[x]
+            for y in range(self.height):
+                src_px = src_col[y]
+                dst_px = dst_col[y]
+                dst_px.ri = src_px.ri
+                dst_px.gi = src_px.gi
+                dst_px.bi = src_px.bi
+                dst_px.ai = src_px.ai
+
+        return result
 
     # --------------------------------------------------
     # Loading Methods: load via FileIO + import_pillow
@@ -119,7 +193,7 @@ class Bitmap:
         if mat.ndim == 2:
             # Grayscale: shape = (H, W)
             h, w = mat.shape
-            self.set_size(w, h)
+            self.allocate(w, h)
             for y in range(h):
                 for x in range(w):
                     v = int(mat[y, x])
@@ -130,7 +204,7 @@ class Bitmap:
             if c not in (3, 4):
                 raise ValueError(f"Unsupported channel count: {c}")
 
-            self.set_size(w, h)
+            self.allocate(w, h)
 
             if c == 3:
                 # BGR
@@ -161,7 +235,7 @@ class Bitmap:
 
         img = image.convert("RGBA")
         w, h = img.size
-        self.set_size(w, h)
+        self.allocate(w, h)
 
         pixels = img.load()
         for x in range(w):
@@ -210,6 +284,32 @@ class Bitmap:
 
         return img
 
+    # --------------------------------------------------
+    # Flood fill: set every pixel to the same RGBA color
+    # --------------------------------------------------
+    def flood(self, color: RGBA) -> None:
+        """
+        Set every pixel in this bitmap to the given RGBA color.
+
+        If the bitmap has zero width or height, this is a no-op.
+        """
+        if self.width <= 0 or self.height <= 0:
+            return
+
+        # Use the int components from the input color.
+        r = color.ri
+        g = color.gi
+        b = color.bi
+        a = color.ai
+
+        for x in range(self.width):
+            col = self.rgba[x]
+            for y in range(self.height):
+                px = col[y]
+                px.ri = r
+                px.gi = g
+                px.bi = b
+                px.ai = a
 
     # --------------------------------------------------
     # Internal helper: compute overlap for stamping
@@ -279,23 +379,7 @@ class Bitmap:
                 src_px = glyph.rgba[gx][gy]
                 dst_px = self.rgba[dx][dy]
                 self.rgba[dx][dy] = RGBA.blend_alpha(src_px, dst_px)
-
-    # --------------------------------------------------
-    # Stamp with premultiplied alpha
-    # --------------------------------------------------
-    def stamp_premultiplied(self, glyph: "Bitmap", x: int, y: int) -> None:
-        bounds = self._compute_stamp_bounds(glyph, x, y)
-        if bounds is None:
-            return
-        start_dx, end_dx, start_dy, end_dy, start_gx, start_gy = bounds
-        for dy in range(start_dy, end_dy):
-            gy = start_gy + (dy - start_dy)
-            for dx in range(start_dx, end_dx):
-                gx = start_gx + (dx - start_dx)
-                src_px = glyph.rgba[gx][gy]
-                dst_px = self.rgba[dx][dy]
-                self.rgba[dx][dy] = RGBA.blend_premultiplied(src_px, dst_px)
-
+                
     # --------------------------------------------------
     # Stamp with additive blending
     # --------------------------------------------------
@@ -311,3 +395,40 @@ class Bitmap:
                 src_px = glyph.rgba[gx][gy]
                 dst_px = self.rgba[dx][dy]
                 self.rgba[dx][dy] = RGBA.blend_additive(src_px, dst_px)
+
+    # --------------------------------------------------
+    # Crop a sub-rectangle into a new Bitmap
+    # --------------------------------------------------
+    def crop(
+        self,
+        x: int,
+        y: int,
+        width: int,
+        height: int) -> "Bitmap":
+        x = int(x)
+        y = int(y)
+        width = int(width)
+        height = int(height)
+        if width <= 0 or height <= 0 or self.width <= 0 or self.height <= 0:
+            return Bitmap()
+        gw, gh = self.width, self.height
+        dw, dh = width, height
+        x_offset = -x
+        y_offset = -y
+        start_dx = max(x_offset, 0)
+        start_dy = max(y_offset, 0)
+        end_dx = min(x_offset + gw, dw)
+        end_dy = min(y_offset + gh, dh)
+        if start_dx >= end_dx or start_dy >= end_dy:
+            return Bitmap()
+        start_gx = start_dx - x_offset
+        start_gy = start_dy - y_offset
+        crop_w = end_dx - start_dx
+        crop_h = end_dy - start_dy
+        result = Bitmap(crop_w, crop_h)
+        for dy in range(crop_h):
+            sy = start_gy + dy
+            for dx in range(crop_w):
+                sx = start_gx + dx
+                result.rgba[dx][dy] = self.rgba[sx][sy]
+        return result

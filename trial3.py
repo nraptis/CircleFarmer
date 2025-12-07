@@ -43,7 +43,7 @@ def trial3() -> None:
 
     # We'll work on a copy so we keep original untouched if needed
     overlay = Bitmap(original.width, original.height)
-    overlay.set_size(original.width, original.height)
+    overlay.allocate(original.width, original.height)
     for x in range(original.width):
         for y in range(original.height):
             overlay.rgba[x][y] = original.rgba[x][y]
@@ -65,8 +65,7 @@ def trial3() -> None:
     # 4. Build a pure mask image (black bg, white where annotated)
     # --------------------------------------------------
     mask = Bitmap(original.width, original.height)
-    mask.set_size(original.width, original.height)
-    # default is black with full alpha already via Bitmap.set_size
+    mask.allocate(original.width, original.height)
 
     width = original.width
     height = original.height

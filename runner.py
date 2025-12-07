@@ -182,7 +182,7 @@ class Runner:
         background = BackgroundFactory.random()
 
         result = Bitmap()
-        result.set_size(width=width, height=height)
+        result.allocate(width=width, height=height)
 
         span_x = background.width - width
         span_y = background.height - height
