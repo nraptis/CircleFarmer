@@ -33,12 +33,12 @@ class TopRightPanel(QWidget):
 
         # Row 1: Target count min
         self.target_min_edit = QLineEdit(self)
-        self.target_min_edit.setText("4")
+        self.target_min_edit.setText("5")
         form.addRow(QLabel("target min:", self), self.target_min_edit)
 
         # Row 2: Target count max
         self.target_max_edit = QLineEdit(self)
-        self.target_max_edit.setText("8")
+        self.target_max_edit.setText("10")
         form.addRow(QLabel("target max:", self), self.target_max_edit)
 
         # Row 3: Max overlap
@@ -48,7 +48,7 @@ class TopRightPanel(QWidget):
 
         # Row 4: Maximum tries
         self.max_tries_edit = QLineEdit(self)
-        self.max_tries_edit.setText("100")
+        self.max_tries_edit.setText("30")
         form.addRow(QLabel("maximum tries:", self), self.max_tries_edit)
 
         main_layout.addLayout(form)

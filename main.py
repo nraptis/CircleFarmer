@@ -92,10 +92,10 @@ class MainWindow(QMainWindow):
         self.home_view.generate_test_requested.connect(self.on_generate_test_requested)
         self.home_view.generate_train_requested.connect(self.on_generate_train_requested)
 
-        trial()
-        trial2()
-        trial3()
-        trial4()
+        #trial()
+        #trial2()
+        #trial3()
+        #trial4()
         
         files = FileIO.get_all_files_local("testing")
         print("files_a ")

@@ -73,10 +73,10 @@ class Runner:
                 
 
                 radius = circle_image.width / 2.0
-                min_x = -(radius / 2.0)
-                max_x = image.width + (radius / 2.0)
-                min_y = -(radius / 2.0)
-                max_y = image.height + (radius / 2.0)
+                min_x = (radius / 2.0)
+                max_x = image.width - (radius / 2.0)
+                min_y = (radius / 2.0)
+                max_y = image.height - (radius / 2.0)
 
                 placement_x = random.randint(int(round(min_x)), int(round(max_x)))
                 placement_y = random.randint(int(round(min_y)), int(round(max_y)))

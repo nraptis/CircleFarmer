@@ -33,22 +33,22 @@ class TopLeftPanel(QWidget):
 
         # Row 1: alpha min
         self.alpha_min_edit = QLineEdit(self)
-        self.alpha_min_edit.setText("0.56")
+        self.alpha_min_edit.setText("0.65")
         form.addRow(QLabel("alpha min:", self), self.alpha_min_edit)
 
         # Row 2: alpha max
         self.alpha_max_edit = QLineEdit(self)
-        self.alpha_max_edit.setText("0.90")
+        self.alpha_max_edit.setText("0.85")
         form.addRow(QLabel("alpha max:", self), self.alpha_max_edit)
 
         # Row 3: alpha noise
         self.alpha_noise_edit = QLineEdit(self)
-        self.alpha_noise_edit.setText("0.16")
+        self.alpha_noise_edit.setText("0.10")
         form.addRow(QLabel("alpha noise:", self), self.alpha_noise_edit)
 
         # Row 4: color noise
         self.color_noise_edit = QLineEdit(self)
-        self.color_noise_edit.setText("0.34")
+        self.color_noise_edit.setText("0.25")
         form.addRow(QLabel("color noise:", self), self.color_noise_edit)
 
         main_layout.addLayout(form)

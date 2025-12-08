@@ -48,7 +48,7 @@ class MiddleLeftPanel(QWidget):
 
         # Row 4: end index
         self.end_index_edit = QLineEdit(self)
-        self.end_index_edit.setText("128")
+        self.end_index_edit.setText("600")
         form.addRow(QLabel("end index:", self), self.end_index_edit)
 
         main_layout.addLayout(form)
